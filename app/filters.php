@@ -88,9 +88,3 @@ Route::filter('csrf', function()
 		throw new Illuminate\Session\TokenMismatchException;
 	}
 });
-
-
-Route::get('/authtest', array('before' => 'auth.basic', function()
-{
-    return View::make('hello');
-}));

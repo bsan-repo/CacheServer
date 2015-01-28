@@ -17,7 +17,50 @@ Route::get('/', function()
 });
 
 // Route group for API versioning
-Route::group(array('prefix' => 'api/v1', 'before' => 'auth.basic'), function()
+Route::group(array('prefix' => 'auth', 'before' => 'auth.basic'), function()
 {
-    Route::resource('url', 'UrlController');
+	Route::post('author', 'AuthorController@saveAuthorData');
+    //Route::resource('author', 'AuthorController');
+    	/*
+	Route::post('author', function()
+    {
+    	Route::resource('author', 'AuthorController');
+    	//return "Post author  ----- ";
+    });
+	Route::get('author', function()
+    {
+    	//Route::resource('author', 'AuthorController');
+    	return "Post author  ----- ";
+    });
+    return "Post auth group  - ---- ";*/
 });
+
+Route::group(array('prefix' => 'admin', 'before' => 'auth.basic'), function()
+{
+
+    Route::get('user', function()
+    {
+        return "ADMIN (GET) ------ ";
+    });
+
+    Route::post('user', function()
+    {
+        return "ADMIN (POST) ------ ";
+    });
+
+});
+
+Route::post('foo/bar', function()
+{
+    return 'Foo Bar OK!!!';
+});
+
+Route::get('foo', array('https', function()
+{
+    return 'Must be over HTTPS';
+}));
+
+Route::get('/authtest', array('before' => 'auth.basic', function()
+{
+    return View::make('hello');
+}));

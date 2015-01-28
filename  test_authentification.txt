@@ -1,1 +1,8 @@
+### test the authtest authorisation with GET route
 curl -v --user client_app_user:xPK81Kan1ejtN71Z4mKw http://localhost:8888/serversch/public/index.php/authtest
+
+#### test the foo/bar path with POST route
+curl -X POST localhost:8888/serversex.php/foo/bar
+
+#test author path POST route
+curl -v -X POST --user client_app_user:xPK81Kan1ejtN71Z4mKw -H "Content-Type: application/json" -d '{"username":"client","password":"guest"}' localhost:8888/serversch/public/index.php/auth/author
