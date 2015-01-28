@@ -51,7 +51,7 @@ Route::filter('auth', function()
 
 Route::filter('auth.basic', function()
 {
-	return Auth::basic("username");
+	return Auth::basic();
 });
 
 /*
@@ -88,9 +88,3 @@ Route::filter('csrf', function()
 		throw new Illuminate\Session\TokenMismatchException;
 	}
 });
-
-
-Route::get('/authtest', array('before' => 'auth.basic', function()
-{
-    return View::make('hello');
-}));

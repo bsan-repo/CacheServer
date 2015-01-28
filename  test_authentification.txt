@@ -1,0 +1,1 @@
+curl -v --user client_app_user:xPK81Kan1ejtN71Z4mKw http://localhost:8888/serversch/public/index.php/authtest
