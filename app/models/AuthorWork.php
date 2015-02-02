@@ -14,7 +14,7 @@ class AuthorWork extends Eloquent implements UserInterface, RemindableInterface 
 	 *
 	 * @var string
 	 */
-	protected $table = 'author_work';
+	protected $table = 'author_works';
 
 	/**
 	 * The attributes excluded from the model's JSON form.
@@ -22,5 +22,13 @@ class AuthorWork extends Eloquent implements UserInterface, RemindableInterface 
 	 * @var array
 	 */
 	//protected $hidden = array('password', 'remember_token');
+	
+	public function author(){
+		return $this->belongs_to('Author')
+	}
+	
+	public function citingworks(){
+		return $this->has_many('CitingWorks');
+	}
 
 }

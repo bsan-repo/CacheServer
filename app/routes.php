@@ -16,26 +16,23 @@ Route::get('/', function()
 	return View::make('hello');
 });
 
+////////////////////////////////////////////////////////////
+
+// TEST JAVA CLIENT RECEIVE
+Route::group(array('prefix' => 'client'), function()
+{
+	Route::post('author', 'AuthorsController@basicTest');
+	Route::post('authorCache', 'AuthorsController@authorCache');
+	Route::post('authorSave', 'AuthorsController@authorSave');
+});
+
 // Route group for API versioning
 Route::group(array('prefix' => 'auth', 'before' => 'auth.basic'), function()
 {
-	Route::post('author', 'AuthorController@saveAuthorData');
-    //Route::resource('author', 'AuthorController');
-    	/*
-	Route::post('author', function()
-    {
-    	Route::resource('author', 'AuthorController');
-    	//return "Post author  ----- ";
-    });
-	Route::get('author', function()
-    {
-    	//Route::resource('author', 'AuthorController');
-    	return "Post author  ----- ";
-    });
-    return "Post auth group  - ---- ";*/
+	Route::post('author', 'AuthorsController@saveAuthorData');
 });
 
-Route::group(array('prefix' => 'admin', 'before' => 'auth.basic'), function()
+Route::group(array('prefix' => 'admin'), function()
 {
 
     Route::get('user', function()
@@ -55,12 +52,9 @@ Route::post('foo/bar', function()
     return 'Foo Bar OK!!!';
 });
 
-Route::get('foo', array('https', function()
-{
-    return 'Must be over HTTPS';
-}));
-
 Route::get('/authtest', array('before' => 'auth.basic', function()
 {
     return View::make('hello');
 }));
+
+Route::get('logout', "auth@logout");

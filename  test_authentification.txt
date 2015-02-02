@@ -6,3 +6,10 @@ curl -X POST localhost:8888/serversex.php/foo/bar
 
 #test author path POST route
 curl -v -X POST --user client_app_user:xPK81Kan1ejtN71Z4mKw -H "Content-Type: application/json" -d '{"username":"client","password":"guest"}' localhost:8888/serversch/public/index.php/auth/author
+
+
+# 
+curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw"}' localhost:8888/serversch/public/index.php/client/author
+
+curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw”, “author”:”{}”, “authorWorks”=“”}’ localhost:8888/serversch/public/index.php/client/author
+

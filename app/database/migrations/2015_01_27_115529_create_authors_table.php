@@ -17,7 +17,7 @@ class CreateAuthorsTable extends Migration {
 			$table->increments('id');
 			$table->string('name', 100);
 			$table->string('afiliation', 200);
-			$table->string('url', 250)->unique();
+			$table->string('url', 250);
 			$table->timestamps();
 		});
 	}

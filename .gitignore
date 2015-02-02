@@ -8,5 +8,5 @@ composer.lock
 Thumbs.db
 
 # Ignore tempfiles.
-*~
-*#
+.*~
+.*#
