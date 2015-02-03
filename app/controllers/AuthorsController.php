@@ -1,4 +1,5 @@
-<?php
+grim
+    <?php
 
 class AuthorsController extends BaseController {
 
@@ -9,26 +10,7 @@ class AuthorsController extends BaseController {
 	 */
 	public function index()
 	{
-		//return "Accessed authors controller!, ok"
-		//return View::make('authors');
-		/*
-		return Response::json(array(
-			'error' => false,
-			'urls' => $urls->toArray()),
-			200
-        );*/
-	}
-	
-	public function saveAuthorData(){
-		//return View::make('authors');
-		$data = Input::json();
 		
-		return Response::json(array(
-			'error' => 'no errors',
-			'urls' => 'urls value',
-			'data' => $data->get('username')),
-			200
-        );
 	}
 	
 	public function basicTest(){
@@ -68,40 +50,74 @@ class AuthorsController extends BaseController {
 				'password' => $data->get('password'),
 			);
 		
-		//die("Credentials: ".$data->get('username')."   ".$data->get('password'));
-		
 		if(Auth::attempt($credentials)){
 			$authorJson = $data->get('author');
 			$authorWorksJson = $data->get('authorWorks');
 			
-			$authorObj = json_decode($authorjson);
-			$authorWorksArray = json_decode($authorWorksJson);
+			//$authorObj = json_decode($authorJson);
+			//$authorWorksArray = json_decode($authorWorksJson);
+                        
+                        log::info("JSON recevied data AUTHOR: ".  json_encode($authorJson));
+                        log::info("JSON recevied data WORKS: ".  json_encode($authorWorksJson));
+                        
+                        $authorsSaved = 0;
+                        $worksSaved = 0;
+                        $citationsSaved = 0;
+                        $CitingWorkText = "";
+		
 			
 			$author = new Author();
-			foreach($authorWorksArray as $authorWorkObj){
+                        $author->name = $authorJson["name"];
+                        $author->url = $authorJson["url"];
+                        $author->affiliation = $authorJson["affiliation"];
+                        $author->save();
+                        log::info("Saved author: ".$author->id);
+                        $authorsSaved++;
+			foreach($authorWorksJson as $authorWorkObj){
 				$authorWork = new AuthorWork();
-				$authorWork.setTitle($authorWorkObj["title"]);
-				$authorWork.setAuthors($authorWorkObj["authors"]);
-				$authorWork.setPubliser($authorWorkObj["publisher"]);
-				$authorWork.setCitationsUrl($authorWorkObj["citationsUrl"]);
-				$authorWork.setRankPublisher($authorWorkObj["rankPublisher"]);
-				$authorWork.setCitations($authorWorkObj["citations"]);
-				$authorWork.setCitationsUrl($authorWorkObj["citationsUrl"]);
-				$authorWork.setYear($authorWorkObj["year"]);    
+				$authorWork->title = $authorWorkObj["title"];
+				$authorWork->authors = $authorWorkObj["authors"];
+				$authorWork->publisher = $authorWorkObj["publisher"];
+				$authorWork->citations_url = $authorWorkObj["citationsUrl"];
+				$authorWork->rank_publisher = $authorWorkObj["rankPublisher"];
+				$authorWork->citations = $authorWorkObj["citations"];
+				$authorWork->quality_citations = $authorWorkObj["qualityCitations"];
+				$authorWork->year = $authorWorkObj["year"];   
+				$authorWork->author_id = $author->id;  
+                                $authorWork->save();
+                                log::info("Saved author work: ".$authorWork->id);
+                                $worksSaved++;
 				
 				$citingWorkObjsArray = $authorWorkObj["citingWorks"];
-				$citingWorkArray = array();
-				foreach($citingWorksArray as $citingWorkObj){
+				foreach($citingWorkObjsArray as $citingWorkObj){
+                                    $CitingWorkText = $CitingWorkText.$citingWorkObj["name"];
 					$citingWork = new CitingWork();
-					$citingWork.setName($authorWorkObj["name"]);
-					$citingWork.setPublisher($authorWorkObj["publisher"]);
-					$citingWork.setRankPublisher($authorWorkObj["rankPublisher"]);
-					$citingWork.setAuthors($authorWorkObj["authors"]);
-					$citingWork.setYear($authorWorkObj["year"]); 
-					array_push($citingWorkArray, $citingWork);
+					$citingWork->name = $citingWorkObj["name"];
+					$citingWork->publisher = $citingWorkObj["publisher"];
+					$citingWork->rank_publisher = $citingWorkObj["rankPublisher"];
+					$citingWork->authors = $citingWorkObj["authors"];
+					$citingWork->year = $citingWorkObj["year"];
+                                        $citingWork->authorwork_id = $authorWork->id;
+                                        $citingWork->save();
+                                        log::info("Saved citing work: ".$citingWork->id);
+                                        $citationsSaved++;
 				}
-				$authorWork.citingWorks($citingWorkArray);    
 			}
+                        
+                        
+                        
+                        
+                        // TODO Add exceptions ErrorException Undefined offset / Undefined index
+			return Response::json(
+				array(
+					'result' => '$credentials ok',
+					'msg' => 'Data saved: Authors('.$authorsSaved.'), works('.$worksSaved.'), citations('.$citationsSaved.')        '.$CitingWorkText
+				),
+				200
+				);
+                        
+                        
+                        
 			
 			// TODO
 			// Convert to model (Author, AuthorWork, CitingWork)
@@ -117,7 +133,7 @@ class AuthorsController extends BaseController {
         }else{
         	return Response::json(array(
 				'result' => 'error',
-				'msg' => 'Invalid credentials.'),
+				'msg' => 'Invalid credentials.'.'   DATA: '.  json_encode($data)),
 				200
 			);
         }
@@ -125,6 +141,15 @@ class AuthorsController extends BaseController {
 	
 	public function authorCache(){
 		
+		
+			return Response::json(
+				array(
+					'result' => 'ok',
+					'msg' => 'Data cached successfully.'
+				),
+				200
+				);
+		/*
 		$data = Input::json();
 		
 		$credentials = array(
@@ -136,7 +161,7 @@ class AuthorsController extends BaseController {
 		
 		if(Auth::attempt($credentials)){
 			$author = Author::whereRaw('url ='.$data->get('authorUrl'))->orderBy('timestamp', 'ASC')->get(0)->toJson();
-			$authorWorls = AuthorWorks:where('author_id', '=', $author->getId())->toJson();
+			$authorWorls = AuthorWorks::where('author_id', '=', $author->getId())->toJson();
 			return Response::json(
 				array(
 					'author' => $author,
@@ -149,7 +174,7 @@ class AuthorsController extends BaseController {
 				'error' => 'invalid credentials'),
 				200
 			);
-        }
+        }*/
     }
 
 	/**

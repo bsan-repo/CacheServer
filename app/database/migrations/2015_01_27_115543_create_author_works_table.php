@@ -21,7 +21,8 @@ class CreateAuthorWorksTable extends Migration {
 			$table->string('citations_url');
 			$table->string('rank_publisher', 10);
 			$table->string('citations', 15);
-			$table->string('qualityCitations', 15);
+			$table->string('quality_citations', 15);
+			$table->string('year', 10);
 			$table->integer('author_id')->unsigned();
 			$table->foreign('author_id')->references('id')->on('authors')->onDelete("cascade");
 			$table->timestamps();

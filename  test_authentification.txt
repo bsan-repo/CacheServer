@@ -11,5 +11,22 @@ curl -v -X POST --user client_app_user:xPK81Kan1ejtN71Z4mKw -H "Content-Type: ap
 # 
 curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw"}' localhost:8888/serversch/public/index.php/client/author
 
-curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw”, “author”:”{}”, “authorWorks”=“”}’ localhost:8888/serversch/public/index.php/client/author
+curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw”, “author”:”{}”, “authorWorks”=“{}”}’ http://localhost:8888/serversch/public/index.php/client/authorCache
+
+curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw"}' localhost:8888/serversch/public/index.php/client/authorSave
+
+
+curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw","author":"name"}' localhost:8888/serversch/public/index.php/client/authorSave
+
+curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw","author":{"name":"nameVal"}}' localhost:8888/serversch/public/index.php/client/authorSave
+
+
+
+curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw","author":{"name":"nameVal"},"authorWorks":[{"title":"titleVal","authors":"authorsVal"}]}' localhost:8888/serversch/public/index.php/client/authorSave
+
+
+curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw","author":{"name":"nameVal"},"authorWorks":[{"title":"titleVal1","authors":"authorsVal1"},{"title":"titleVal2","authors":"authorsVal2"}]}' localhost:8888/serversch/public/index.php/client/authorSave
+
+
+
 

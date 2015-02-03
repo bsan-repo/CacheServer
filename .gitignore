@@ -10,3 +10,4 @@ Thumbs.db
 # Ignore tempfiles.
 .*~
 .*#
+/nbproject/private/
