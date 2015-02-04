@@ -24,7 +24,7 @@ class Author extends Eloquent implements UserInterface, RemindableInterface {
 	//protected $hidden = array('password', 'remember_token');
 	
 	public function authorworks(){
-		return $this->has_many('AuthorWork');
+		return $this->hasMany('AuthorWork');
 	}
 
 }

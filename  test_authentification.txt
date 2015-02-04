@@ -8,7 +8,7 @@ curl -X POST localhost:8888/serversex.php/foo/bar
 curl -v -X POST --user client_app_user:xPK81Kan1ejtN71Z4mKw -H "Content-Type: application/json" -d '{"username":"client","password":"guest"}' localhost:8888/serversch/public/index.php/auth/author
 
 
-# 
+# save
 curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw"}' localhost:8888/serversch/public/index.php/client/author
 
 curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw”, “author”:”{}”, “authorWorks”=“{}”}’ http://localhost:8888/serversch/public/index.php/client/authorCache
@@ -26,6 +26,13 @@ curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_
 
 
 curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw","author":{"name":"nameVal"},"authorWorks":[{"title":"titleVal1","authors":"authorsVal1"},{"title":"titleVal2","authors":"authorsVal2"}]}' localhost:8888/serversch/public/index.php/client/authorSave
+
+
+
+
+
+# cache
+curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw","authorUrl":"http://author.1.com"}' localhost:8888/serversch/public/index.php/client/authorCache
 
 
 

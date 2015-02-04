@@ -33,13 +33,13 @@ class AuthorsController extends BaseController {
 			),
 			200
 			);
-        }else{
-        	return Response::json(array(
-				'error' => 'invalid credentials'),
-				200
-			);
+            }else{
+                    return Response::json(array(
+                                    'error' => 'invalid credentials'),
+                                    200
+                            );
+            }
         }
-    }
 	
 	public function authorSave(){
 		
@@ -97,7 +97,7 @@ class AuthorsController extends BaseController {
 					$citingWork->rank_publisher = $citingWorkObj["rankPublisher"];
 					$citingWork->authors = $citingWorkObj["authors"];
 					$citingWork->year = $citingWorkObj["year"];
-                                        $citingWork->authorwork_id = $authorWork->id;
+                                        $citingWork->author_work_id = $authorWork->id;
                                         $citingWork->save();
                                         log::info("Saved citing work: ".$citingWork->id);
                                         $citationsSaved++;
@@ -106,7 +106,7 @@ class AuthorsController extends BaseController {
                         
                         
                         
-                        
+                        /* DEBUG
                         // TODO Add exceptions ErrorException Undefined offset / Undefined index
 			return Response::json(
 				array(
@@ -115,7 +115,7 @@ class AuthorsController extends BaseController {
 				),
 				200
 				);
-                        
+                        */
                         
                         
 			
@@ -130,52 +130,58 @@ class AuthorsController extends BaseController {
 				),
 				200
 				);
-        }else{
-        	return Response::json(array(
-				'result' => 'error',
-				'msg' => 'Invalid credentials.'.'   DATA: '.  json_encode($data)),
-				200
-			);
+                }else{
+                    return Response::json(array(
+                                    'result' => 'error',
+                                    'msg' => 'Invalid credentials.'.'   DATA: '.  json_encode($data)),
+                                    200
+                            );
+                }
         }
-    }
 	
 	public function authorCache(){
+            $data = Input::json();
+
+            $credentials = array(
+                            'username' => $data->get('username'),
+                            'password' => $data->get('password'),
+                    );
+
+            //die("Credentials: ".$data->get('username')."   ".$data->get('password'));
 		
-		
-			return Response::json(
-				array(
-					'result' => 'ok',
-					'msg' => 'Data cached successfully.'
-				),
-				200
-				);
-		/*
-		$data = Input::json();
-		
-		$credentials = array(
-				'username' => $data->get('username'),
-				'password' => $data->get('password'),
-			);
-		
-		//die("Credentials: ".$data->get('username')."   ".$data->get('password'));
-		
-		if(Auth::attempt($credentials)){
-			$author = Author::whereRaw('url ='.$data->get('authorUrl'))->orderBy('timestamp', 'ASC')->get(0)->toJson();
-			$authorWorls = AuthorWorks::where('author_id', '=', $author->getId())->toJson();
-			return Response::json(
-				array(
-					'author' => $author,
-					'authorWorks' => $authorWorls
-				),
-				200
-				);
-        }else{
-        	return Response::json(array(
-				'error' => 'invalid credentials'),
-				200
-			);
-        }*/
-    }
+            if(Auth::attempt($credentials)){
+                $authorUrl = $data->get('authorUrl');
+                $authorQueryResults = Author::whereRaw("\"url\" = '".$authorUrl. "' order by \"updated_at\" DESC LIMIT 1")->get();
+                if(is_object($authorQueryResults) && get_class($authorQueryResults) == "Illuminate\\Database\\Eloquent\\Collection" && !$authorQueryResults->isEmpty()){
+                    $author = $authorQueryResults[0];
+                    $authorWorksQueryResults = AuthorWork::whereRaw("\"author_id\" = '".$author->id."'")->get();
+                    
+                    if(is_object($authorWorksQueryResults) && get_class($authorWorksQueryResults) == "Illuminate\\Database\\Eloquent\\Collection" && !$authorWorksQueryResults->isEmpty()){
+                        foreach ($authorWorksQueryResults as $authorWork){
+                            $citingWorks = $authorWork->citingWorks;
+                        }
+
+                        return Response::json(
+                                array(
+                                        'result' => 'ok',
+                                        'authorWorks' => "(".$authorUrl.")DATA: ".  json_encode($authorWorksQueryResults)
+                                ),
+                                200
+                                );
+                    }
+                }else{
+                    return Response::json(array(
+                                    'result' => 'no_records_found '.  json_encode($authorQueryResults)),
+                                    200
+                            );
+                }
+            }else{
+                return Response::json(array(
+                                'error' => 'invalid credentials'),
+                                200
+                        );
+            }
+        }
 
 	/**
 	 * Show the form for creating a new resource.

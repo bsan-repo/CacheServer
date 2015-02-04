@@ -20,8 +20,8 @@ class CreateCitingWorksTable extends Migration {
 			$table->string('publisher');
 			$table->string('rank_publisher', 10);
 			$table->string('year', 10);
-			$table->integer('authorwork_id')->unsigned();
-			$table->foreign('authorwork_id')->references('id')->on('author_works')->onDelete("cascade");
+			$table->integer('author_work_id')->unsigned();
+			$table->foreign('author_work_id')->references('id')->on('author_works')->onDelete("cascade");
 			$table->timestamps();
 		});
 	}

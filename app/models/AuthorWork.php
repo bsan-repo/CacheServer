@@ -24,11 +24,11 @@ class AuthorWork extends Eloquent implements UserInterface, RemindableInterface 
 	//protected $hidden = array('password', 'remember_token');
 	
 	public function author(){
-		return $this->belongs_to('Author');
+		return $this->belongsTo('Author');
 	}
 	
 	public function citingworks(){
-		return $this->has_many('CitingWorks');
+		return $this->hasMany('CitingWork');
 	}
 
 }
