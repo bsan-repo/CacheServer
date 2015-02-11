@@ -37,3 +37,6 @@ curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_
 
 
 
+SELECT authors.id, authors.name, author_works.id, author_works.title FROM author_works INNER JOIN authors ON(author_works.author_id = authors.id);
+
+select author_works.title, citing_works.id, citing_works.name from author_works, citing_works where citing_works.author_work_id = author_works.id;
