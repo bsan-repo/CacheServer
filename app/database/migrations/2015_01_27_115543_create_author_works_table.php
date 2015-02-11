@@ -18,6 +18,7 @@ class CreateAuthorWorksTable extends Migration {
 			$table->string('title');
 			$table->string('authors');
 			$table->string('publisher');
+			$table->string('publisher_in_google')->nullable();
 			$table->string('citations_url');
 			$table->string('rank_publisher', 10);
 			$table->string('citations', 15);

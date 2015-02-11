@@ -18,6 +18,9 @@ class CreateCitingWorksTable extends Migration {
 			$table->string('name');
 			$table->string('authors');
 			$table->string('publisher');
+			$table->string('publisher_in_google')->nullable();
+			$table->string('publisher_in_external_web')->nullable();
+			$table->string('url')->nullable();
 			$table->string('rank_publisher', 10);
 			$table->string('year', 10);
 			$table->integer('author_work_id')->unsigned();

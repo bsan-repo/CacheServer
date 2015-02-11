@@ -42,6 +42,15 @@ class AuthorsController extends BaseController {
         }
 	
 	public function authorSave(){
+                /*$content = Request::json();
+            
+                return Response::json(
+				array(
+					'result' => '$credentials ok',
+					'msg' => 'Data:'.Request::header('Content-Type')."  isJson: ".Request::isJson().  serialize($content)
+				),
+				200
+				);*/
 		
 		$data = Input::json();
 		
@@ -65,45 +74,64 @@ class AuthorsController extends BaseController {
                         $citationsSaved = 0;
                         $CitingWorkText = "";
 		
-			
-			$author = new Author();
-                        $author->name = $authorJson["name"];
-                        $author->url = $authorJson["url"];
-                        $author->affiliation = $authorJson["affiliation"];
-                        $author->save();
-                        log::info("Saved author: ".$author->id);
-                        $authorsSaved++;
-			foreach($authorWorksJson as $authorWorkObj){
-				$authorWork = new AuthorWork();
-				$authorWork->title = $authorWorkObj["title"];
-				$authorWork->authors = $authorWorkObj["authors"];
-				$authorWork->publisher = $authorWorkObj["publisher"];
-				$authorWork->citations_url = $authorWorkObj["citationsUrl"];
-				$authorWork->rank_publisher = $authorWorkObj["rankPublisher"];
-				$authorWork->citations = $authorWorkObj["citations"];
-				$authorWork->quality_citations = $authorWorkObj["qualityCitations"];
-				$authorWork->year = $authorWorkObj["year"];   
-				$authorWork->author_id = $author->id;  
-                                $authorWork->save();
-                                log::info("Saved author work: ".$authorWork->id);
-                                $worksSaved++;
-				
-				$citingWorkObjsArray = $authorWorkObj["citingWorks"];
-				foreach($citingWorkObjsArray as $citingWorkObj){
-                                    $CitingWorkText = $CitingWorkText.$citingWorkObj["name"];
-					$citingWork = new CitingWork();
-					$citingWork->name = $citingWorkObj["name"];
-					$citingWork->publisher = $citingWorkObj["publisher"];
-					$citingWork->rank_publisher = $citingWorkObj["rankPublisher"];
-					$citingWork->authors = $citingWorkObj["authors"];
-					$citingWork->year = $citingWorkObj["year"];
-                                        $citingWork->author_work_id = $authorWork->id;
-                                        $citingWork->save();
-                                        log::info("Saved citing work: ".$citingWork->id);
-                                        $citationsSaved++;
-				}
-			}
-                        
+			try{
+                            DB::beginTransaction();
+                            $author = new Author();
+                            $author->name = $authorJson["name"];
+                            $author->url = $authorJson["url"];
+                            $author->affiliation = $authorJson["affiliation"];
+                            $author->save();
+                            log::info("Saved author: ".$author->id);
+                            $authorsSaved++;
+                            foreach($authorWorksJson as $authorWorkObj){
+                                    $authorWork = new AuthorWork();
+                                    $authorWork->title = $authorWorkObj["title"];
+                                    $authorWork->authors = $authorWorkObj["authors"];
+                                    $authorWork->publisher = $authorWorkObj["publisher"];
+                                    $authorWork->publisher_in_google = $authorWorkObj["publisherInGoogle"];
+                                    $authorWork->citations_url = $authorWorkObj["citationsUrl"];
+                                    $authorWork->rank_publisher = $authorWorkObj["rankPublisher"];
+                                    $authorWork->citations = $authorWorkObj["citations"];
+                                    $authorWork->quality_citations = $authorWorkObj["qualityCitations"];
+                                    $authorWork->year = $authorWorkObj["year"];   
+                                    $authorWork->author_id = $author->id;  
+                                    $authorWork->save();
+                                    log::info("Saved author work: ".$authorWork->id);
+                                    $worksSaved++;
+
+                                    $citingWorkObjsArray = $authorWorkObj["citingWorks"];
+                                    foreach($citingWorkObjsArray as $citingWorkObj){
+                                        $CitingWorkText = $CitingWorkText.$citingWorkObj["name"];
+                                            $citingWork = new CitingWork();
+                                            $citingWork->name = $citingWorkObj["name"];
+                                            $citingWork->publisher = $citingWorkObj["publisher"];
+                                            $citingWork->publisher_in_google = $citingWorkObj["publisherInGoogle"];
+                                            $citingWork->publisher_in_external_web = $citingWorkObj["publisherInExternalWeb"];
+                                            $citingWork->rank_publisher = $citingWorkObj["rankPublisher"];
+                                            $citingWork->authors = $citingWorkObj["authors"];
+                                            $citingWork->year = $citingWorkObj["year"];
+                                            if(array_key_exists("url", $citingWork)){
+                                                $citingWork->url = $citingWorkObj["url"];
+                                            }
+                                            $citingWork->author_work_id = $authorWork->id;
+                                            $citingWork->save();
+                                            log::info("Saved citing work: ".$citingWork->id);
+                                            $citationsSaved++;
+                                            unset($citingWork);
+                                    }
+                                    unset($authorWork);
+                            }
+                            DB::commit();
+                        }catch(Exception $ex){
+                            // DB::rollBack(); Performed automatically if there is an exception
+                            return Response::json(
+				array(
+                                        'result' => 'Exception',
+                                        'msg' => $ex->getMessage()
+                                    ),
+                                    200
+				);
+                        }
                         
                         
                         /* DEBUG
@@ -133,7 +161,7 @@ class AuthorsController extends BaseController {
                 }else{
                     return Response::json(array(
                                     'result' => 'error',
-                                    'msg' => 'Invalid credentials.'.'   DATA: '.  json_encode($data)),
+                                    'msg' => 'Invalid credentials.'.'   DATA: '.  implode("********", Input::all())),
                                     200
                             );
                 }
@@ -154,7 +182,7 @@ class AuthorsController extends BaseController {
                 $authorQueryResults = Author::whereRaw("\"url\" = '".$authorUrl. "' order by \"updated_at\" DESC LIMIT 1")->get();
                 if(is_object($authorQueryResults) && get_class($authorQueryResults) == "Illuminate\\Database\\Eloquent\\Collection" && !$authorQueryResults->isEmpty()){
                     $author = $authorQueryResults[0];
-                    $authorWorksQueryResults = AuthorWork::whereRaw("\"author_id\" = '".$author->id."'")->get();
+                    $authorWorksQueryResults = AuthorWork::whereRaw("\"author_id\" = '".$author->id."' order by \"citations\"")->get();
                     
                     if(is_object($authorWorksQueryResults) && get_class($authorWorksQueryResults) == "Illuminate\\Database\\Eloquent\\Collection" && !$authorWorksQueryResults->isEmpty()){
                         foreach ($authorWorksQueryResults as $authorWork){
@@ -164,7 +192,8 @@ class AuthorsController extends BaseController {
                         return Response::json(
                                 array(
                                         'result' => 'ok',
-                                        'authorWorks' => "(".$authorUrl.")DATA: ".  json_encode($authorWorksQueryResults)
+                                        'authorSelected' => json_encode($author),
+                                        'authorWorks' => json_encode($authorWorksQueryResults)
                                 ),
                                 200
                                 );
