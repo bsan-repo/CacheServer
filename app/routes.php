@@ -47,6 +47,20 @@ Route::group(array('prefix' => 'admin'), function()
 
 });
 
+// Test the database is up and running as expected
+Route::get('/dbtest', function(){
+   $name = '';
+   try{
+       DB::connection()->getDatabaseName();
+
+       $name = Author::find(8)->name;
+
+   }catch(Exception $e){
+      return $e->getMessage().".     ";
+   }
+   return "Database connection ok.    ".$name;
+});
+
 Route::post('foo/bar', function()
 {
     return 'Foo Bar OK!!!';
