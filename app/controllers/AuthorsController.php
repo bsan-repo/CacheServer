@@ -183,10 +183,10 @@ class AuthorsController extends BaseController {
 		
             if(Auth::attempt($credentials)){
                 $authorUrl = $data->get('authorUrl');
-                $authorQueryResults = Author::whereRaw("\"url\" = '".$authorUrl. "' order by \"updated_at\" DESC LIMIT 1")->get();
+                $authorQueryResults = Author::whereRaw("url = '".$authorUrl. "' order by updated_at DESC LIMIT 1")->get();
                 if(is_object($authorQueryResults) && get_class($authorQueryResults) == "Illuminate\\Database\\Eloquent\\Collection" && !$authorQueryResults->isEmpty()){
                     $author = $authorQueryResults[0];
-                    $authorWorksQueryResults = AuthorWork::whereRaw("\"author_id\" = '".$author->id."' order by \"citations\"")->get();
+                    $authorWorksQueryResults = AuthorWork::whereRaw("author_id = '".$author->id."' order by citations")->get();
                     
                     if(is_object($authorWorksQueryResults) && get_class($authorWorksQueryResults) == "Illuminate\\Database\\Eloquent\\Collection" && !$authorWorksQueryResults->isEmpty()){
                         foreach ($authorWorksQueryResults as $authorWork){
@@ -196,6 +196,7 @@ class AuthorsController extends BaseController {
                         return Response::json(
                                 array(
                                         'result' => 'ok',
+                                        'authorUrl ' => $authorUrl,
                                         'authorSelected' => json_encode($author),
                                         'authorWorks' => json_encode($authorWorksQueryResults)
                                 ),
