@@ -15,8 +15,8 @@ class CreateAuthorWorksTable extends Migration {
 		Schema::create('author_works', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('title');
-			$table->string('authors');
+			$table->string('title', 500);
+			$table->string('authors', 400);
 			$table->string('publisher');
 			$table->string('publisher_in_google')->nullable();
 			$table->string('citations_url');

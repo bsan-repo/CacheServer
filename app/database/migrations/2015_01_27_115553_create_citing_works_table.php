@@ -15,8 +15,8 @@ class CreateCitingWorksTable extends Migration {
 		Schema::create('citing_works', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('name');
-			$table->string('authors');
+			$table->string('name', 500);
+			$table->string('authors', 400);
 			$table->string('publisher');
 			$table->string('publisher_in_google')->nullable();
 			$table->string('publisher_in_external_web')->nullable();

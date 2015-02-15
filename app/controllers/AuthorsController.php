@@ -73,6 +73,8 @@ class AuthorsController extends BaseController {
                         $worksSaved = 0;
                         $citationsSaved = 0;
                         $CitingWorkText = "";
+                        
+                        $msgCurrentEntry = "";
 		
 			try{
                             DB::beginTransaction();
@@ -95,6 +97,7 @@ class AuthorsController extends BaseController {
                                     $authorWork->quality_citations = $authorWorkObj["qualityCitations"];
                                     $authorWork->year = $authorWorkObj["year"];   
                                     $authorWork->author_id = $author->id;  
+                                    $msgCurrentEntry = "Authorwork: ".$authorWorkObj["title"];
                                     $authorWork->save();
                                     log::info("Saved author work: ".$authorWork->id);
                                     $worksSaved++;
@@ -114,6 +117,7 @@ class AuthorsController extends BaseController {
                                                 $citingWork->url = $citingWorkObj["url"];
                                             }
                                             $citingWork->author_work_id = $authorWork->id;
+                                            $msgCurrentEntry = "Citingwork: ".$citingWorkObj["name"];
                                             $citingWork->save();
                                             log::info("Saved citing work: ".$citingWork->id);
                                             $citationsSaved++;
@@ -126,7 +130,7 @@ class AuthorsController extends BaseController {
                             // DB::rollBack(); Performed automatically if there is an exception
                             return Response::json(
 				array(
-                                        'result' => 'Exception',
+                                        'result' => 'Exception: |||||||| '.$msgCurrentEntry.' |||||||| ',
                                         'msg' => $ex->getMessage()
                                     ),
                                     200
@@ -161,7 +165,7 @@ class AuthorsController extends BaseController {
                 }else{
                     return Response::json(array(
                                     'result' => 'error',
-                                    'msg' => 'Invalid credentials.'.'   DATA: '.  implode("********", Input::all())),
+                                    'msg' => 'Invalid credentials.'.'   DATA: '.  implode(Input::all())),
                                     200
                             );
                 }

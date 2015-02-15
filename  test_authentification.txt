@@ -32,7 +32,7 @@ curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_
 
 
 # cache
-curl -v -X POST -H "Content-Type: application/json" -d '{"username":"client_app_user","password":"xPK81Kan1ejtN71Z4mKw","authorUrl":"http://author.1.com"}' localhost:8888/serversch/public/index.php/client/authorCache
+curl -v -X POST -H "Content-Type: application/json" -d '{"password":"xPK81Kan1ejtN71Z4mKw","authorUrl":"\/citations?user=4m2G-H8AAAAJ&hl=en","username":"client_app_user"}' ec2-54-165-17-29.compute-1.amazonaws.com/serversch/index.php/client/authorCache
 
 
 
