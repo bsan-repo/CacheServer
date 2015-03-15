@@ -24,6 +24,7 @@ Route::group(array('prefix' => 'client'), function()
     Route::post('author', 'AuthorsController@basicTest');
     Route::post('authorCache', 'AuthorsController@authorCache');
     Route::post('authorSave', 'AuthorsController@authorSave');
+    Route::post('getAuthorToProcessFromServer', 'AuthorsController@getAuthorToProcessFromServer');
 });
 
 // Route group for API versioning
