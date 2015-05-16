@@ -49,6 +49,7 @@ class AuthorsController extends BaseController {
         //die("Credentials: ".$data->get('username')."   ".$data->get('password'));
 
         if (Auth::attempt($credentials)) {
+            
             $authorToProcessQueryResults = AuthorToProcess::whereRaw("date_add(processing, interval 1 day) order by processing ASC LIMIT 1")->get();
             
             if (is_object($authorToProcessQueryResults) && get_class($authorToProcessQueryResults) == "Illuminate\\Database\\Eloquent\\Collection" && !$authorToProcessQueryResults->isEmpty()) {
@@ -161,7 +162,7 @@ class AuthorsController extends BaseController {
                     unset($authorWork);
                 }
                 DB::commit();
-                DB:delete("delete from authors_to_process where url=".$author->url);
+                AuthorToProcess::whereRaw("url=".$author->url)->delete();
             } catch (Exception $ex) {
                 // DB::rollBack(); Performed automatically if there is an exception
                 return Response::json(
